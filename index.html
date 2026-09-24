@@ -42,7 +42,7 @@
         body { font-family: 'Outfit', sans-serif; }
         
         .glass-card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(229, 231, 235, 0.8);
         }
@@ -67,117 +67,135 @@
             text-decoration: line-through;
             opacity: 0.6;
         }
+
+        /* Utilidade para ocultar scrollbar em carrossel mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Toque otimizado para telas sensíveis ao toque */
+        button, label, input, select {
+            touch-action: manipulation;
+        }
     </style>
 </head>
-<body class="min-h-full flex flex-col text-slate-800 antialiased selection:bg-emerald-500 selection:text-white">
+<body class="min-h-full flex flex-col text-slate-800 antialiased selection:bg-emerald-500 selection:text-white pb-24 sm:pb-8">
 
     <!-- Header Navigation -->
-    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200">
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-amber-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
-                    <i class="fa-solid font-bold fa-wand-magic-sparkles text-lg"></i>
+            <div class="flex items-center gap-2.5 cursor-pointer active:scale-95 transition-transform" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-amber-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+                    <i class="fa-solid font-bold fa-wand-magic-sparkles text-base sm:text-lg"></i>
                 </div>
                 <div>
-                    <span class="text-xl font-bold tracking-tight text-slate-900">Food<span class="text-emerald-600">Genie</span></span>
+                    <span class="text-lg sm:text-xl font-bold tracking-tight text-slate-900">Food<span class="text-emerald-600">Genie</span></span>
                     <span class="hidden sm:inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 ml-2">IA Anti-Desperdício</span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-3">
-                <button id="btnOpenFavorites" class="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-600 hover:text-emerald-600 hover:bg-slate-100 transition text-sm font-medium">
-                    <i class="fa-solid fa-bookmark text-amber-500"></i>
-                    <span class="hidden sm:inline">Favoritas</span>
-                    <span id="favBadge" class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+            <div class="flex items-center gap-2">
+                <button id="btnOpenFavorites" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-slate-700 hover:text-emerald-600 hover:bg-slate-100 active:bg-slate-200 transition text-sm font-semibold">
+                    <i class="fa-solid fa-bookmark text-amber-500 text-base"></i>
+                    <span class="text-xs sm:text-sm">Favoritas</span>
+                    <span id="favBadge" class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full ml-0.5">0</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <main class="flex-grow max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
         
         <!-- Hero Section -->
-        <section class="text-center max-w-3xl mx-auto space-y-4">
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold mb-2">
-                <i class="fa-solid fa-leaf"></i> Economize dinheiro e reduza o desperdício em casa
+        <section class="text-center max-w-3xl mx-auto space-y-3 px-2">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+                <i class="fa-solid fa-leaf text-emerald-600"></i> Zero Desperdício na Cozinha
             </div>
-            <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                O que você tem na geladeira? <br>
-                <span class="gradient-text">A IA cria sua receita ideal.</span>
+            <h1 class="text-2xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                O que você tem em casa? <br class="hidden sm:inline">
+                <span class="gradient-text">A IA cria sua receita.</span>
             </h1>
-            <p class="text-slate-600 text-base sm:text-lg">
-                Digite os ingredientes disponíveis na sua cozinha e deixe nosso assistente culinário sugerir um prato delicioso e prático.
+            <p class="text-slate-600 text-xs sm:text-base max-w-lg mx-auto">
+                Adicione os ingredientes disponíveis e monte refeições deliciosas economizando dinheiro.
             </p>
         </section>
 
         <!-- Main Form Card -->
-        <section class="glass-card rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 max-w-4xl mx-auto border border-slate-200/80">
+        <section class="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-lg sm:shadow-xl shadow-slate-200/50 max-w-4xl mx-auto border border-slate-200/80">
             
             <!-- Ingredient Input Section -->
-            <div class="space-y-4">
-                <label class="block text-sm font-semibold text-slate-700">
-                    <i class="fa-solid fa-basket-shopping text-emerald-600 mr-1.5"></i> Ingredientes Disponíveis
+            <div class="space-y-3">
+                <label class="block text-xs sm:text-sm font-bold text-slate-800 flex items-center justify-between">
+                    <span class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-basket-shopping text-emerald-600"></i> Meus Ingredientes
+                    </span>
+                    <span id="ingCountBadge" class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-lg">0 itens</span>
                 </label>
                 
-                <div class="flex gap-2">
+                <div class="flex flex-col sm:flex-row gap-2">
                     <div class="relative flex-grow">
                         <input type="text" id="ingredientInput" 
-                            placeholder="Ex: Frango, ovo, tomate, arroz, queijo..." 
-                            class="w-full pl-10 pr-4 py-3.5 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 transition shadow-sm"
+                            placeholder="Ex: Frango, ovo, tomate, queijo..." 
+                            class="w-full pl-10 pr-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm text-slate-800 transition shadow-sm"
                             onkeypress="if(event.key === 'Enter') addIngredientFromInput()">
                         <i class="fa-solid fa-carrot absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     </div>
                     <button onclick="addIngredientFromInput()" 
-                        class="px-5 py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-medium transition flex items-center gap-2 shadow-md">
-                        <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Adicionar</span>
+                        class="w-full sm:w-auto px-5 py-3 sm:py-3.5 bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white rounded-xl sm:rounded-2xl font-semibold transition flex items-center justify-center gap-2 shadow-md text-sm active:scale-[0.98]">
+                        <i class="fa-solid fa-plus"></i> <span>Adicionar</span>
                     </button>
                 </div>
 
-                <!-- Quick Presets -->
-                <div class="pt-1">
-                    <span class="text-xs font-medium text-slate-500 mr-2">Sugestões rápidas:</span>
-                    <div class="inline-flex flex-wrap gap-1.5 mt-2 sm:mt-0">
-                        <button onclick="addQuickIngredient('Ovos')" class="text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200 transition">+ Ovos</button>
-                        <button onclick="addQuickIngredient('Tomate')" class="text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200 transition">+ Tomate</button>
-                        <button onclick="addQuickIngredient('Arroz cozido')" class="text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200 transition">+ Arroz</button>
-                        <button onclick="addQuickIngredient('Peito de Frango')" class="text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200 transition">+ Frango</button>
-                        <button onclick="addQuickIngredient('Queijo')" class="text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200 transition">+ Queijo</button>
-                        <button onclick="addQuickIngredient('Cebola')" class="text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200 transition">+ Cebola</button>
-                        <button onclick="addQuickIngredient('Batata')" class="text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200 transition">+ Batata</button>
+                <!-- Touch-friendly Category Pills Carousel -->
+                <div class="pt-2">
+                    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 text-xs">
+                        <span class="text-slate-400 font-medium shrink-0 mr-1"><i class="fa-solid fa-bolt text-amber-500"></i> Rápido:</span>
+                        <button onclick="addQuickIngredient('Ovos')" class="shrink-0 bg-slate-100 hover:bg-emerald-50 active:bg-emerald-100 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 transition font-medium">+ 🥚 Ovos</button>
+                        <button onclick="addQuickIngredient('Tomate')" class="shrink-0 bg-slate-100 hover:bg-emerald-50 active:bg-emerald-100 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 transition font-medium">+ 🍅 Tomate</button>
+                        <button onclick="addQuickIngredient('Arroz cozido')" class="shrink-0 bg-slate-100 hover:bg-emerald-50 active:bg-emerald-100 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 transition font-medium">+ 🍚 Arroz</button>
+                        <button onclick="addQuickIngredient('Frango')" class="shrink-0 bg-slate-100 hover:bg-emerald-50 active:bg-emerald-100 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 transition font-medium">+ 🍗 Frango</button>
+                        <button onclick="addQuickIngredient('Queijo')" class="shrink-0 bg-slate-100 hover:bg-emerald-50 active:bg-emerald-100 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 transition font-medium">+ 🧀 Queijo</button>
+                        <button onclick="addQuickIngredient('Cebola')" class="shrink-0 bg-slate-100 hover:bg-emerald-50 active:bg-emerald-100 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 transition font-medium">+ 🧅 Cebola</button>
+                        <button onclick="addQuickIngredient('Batata')" class="shrink-0 bg-slate-100 hover:bg-emerald-50 active:bg-emerald-100 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 transition font-medium">+ 🥔 Batata</button>
+                        <button onclick="addQuickIngredient('Azeite')" class="shrink-0 bg-slate-100 hover:bg-emerald-50 active:bg-emerald-100 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 transition font-medium">+ 🫒 Azeite</button>
                     </div>
                 </div>
 
                 <!-- Selected Ingredients Grid -->
-                <div id="ingredientsContainer" class="min-h-[70px] p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-wrap gap-2 items-center">
-                    <span id="emptyIngredientsPlaceholder" class="text-sm text-slate-400 italic px-2">Nenhum ingrediente adicionado ainda. Digite acima para começar!</span>
+                <div id="ingredientsContainer" class="min-h-[64px] p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-slate-50/80 border border-slate-200/80 flex flex-wrap gap-2 items-center">
+                    <span id="emptyIngredientsPlaceholder" class="text-xs sm:text-sm text-slate-400 italic px-2">Nenhum ingrediente adicionado. Digite ou toque nas sugestões acima!</span>
                 </div>
             </div>
 
             <!-- Settings Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t border-slate-200/80">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-slate-200/80">
                 
                 <!-- Prep Time Option -->
                 <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-slate-700">
-                        <i class="fa-regular fa-clock text-emerald-600 mr-1.5"></i> Tempo Máximo Disponível
+                    <label class="block text-xs sm:text-sm font-bold text-slate-800">
+                        <i class="fa-regular fa-clock text-emerald-600 mr-1"></i> Tempo Disponível
                     </label>
-                    <div class="grid grid-cols-4 gap-2">
-                        <button type="button" data-time="15" onclick="selectTime(15)" class="time-btn py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-emerald-500 transition text-center">15 min</button>
-                        <button type="button" data-time="30" onclick="selectTime(30)" class="time-btn py-2 text-xs font-semibold rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-700 transition text-center">30 min</button>
-                        <button type="button" data-time="45" onclick="selectTime(45)" class="time-btn py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-emerald-500 transition text-center">45 min</button>
-                        <button type="button" data-time="any" onclick="selectTime('any')" class="time-btn py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-emerald-500 transition text-center">Qualquer</button>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <button type="button" data-time="15" onclick="selectTime(15)" class="time-btn py-2.5 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-emerald-500 active:bg-emerald-50 transition text-center">⏱️ 15 min</button>
+                        <button type="button" data-time="30" onclick="selectTime(30)" class="time-btn py-2.5 text-xs font-semibold rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-700 transition text-center">⏱️ 30 min</button>
+                        <button type="button" data-time="45" onclick="selectTime(45)" class="time-btn py-2.5 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-emerald-500 active:bg-emerald-50 transition text-center">⏱️ 45 min</button>
+                        <button type="button" data-time="any" onclick="selectTime('any')" class="time-btn py-2.5 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-emerald-500 active:bg-emerald-50 transition text-center">♾️ Qualquer</button>
                     </div>
                 </div>
 
                 <!-- Strict Mode Switch -->
-                <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-                    <div class="space-y-0.5">
-                        <span class="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+                <div class="flex items-center justify-between p-3 sm:p-3.5 bg-slate-50/80 rounded-xl sm:rounded-2xl border border-slate-200">
+                    <div class="space-y-0.5 pr-2">
+                        <span class="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-1.5">
                             <i class="fa-solid fa-lock text-amber-500"></i> Usar Apenas o que Tenho
                         </span>
-                        <p class="text-xs text-slate-500">Não sugerir ingredientes extras de supermercado</p>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Sem sugerir compras adicionais no mercado</p>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
                         <input type="checkbox" id="strictModeToggle" class="sr-only peer" checked>
                         <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                     </label>
@@ -185,144 +203,139 @@
 
                 <!-- Dietary Preferences -->
                 <div class="md:col-span-2 space-y-2">
-                    <label class="block text-sm font-semibold text-slate-700">
-                        <i class="fa-solid fa-utensils text-emerald-600 mr-1.5"></i> Preferência Alimentar (Opcional)
+                    <label class="block text-xs sm:text-sm font-bold text-slate-800">
+                        <i class="fa-solid fa-utensils text-emerald-600 mr-1"></i> Preferências Culinárias (Opcional)
                     </label>
-                    <div class="flex flex-wrap gap-2">
+                    <div class="flex flex-wrap gap-1.5 sm:gap-2">
                         <label class="cursor-pointer">
                             <input type="checkbox" name="diet" value="Vegetariano" class="sr-only peer">
-                            <span class="text-xs px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition inline-block">🌱 Vegetariano</span>
+                            <span class="text-xs px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition inline-block font-medium">🌱 Vegetariano</span>
                         </label>
                         <label class="cursor-pointer">
                             <input type="checkbox" name="diet" value="Vegano" class="sr-only peer">
-                            <span class="text-xs px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition inline-block">🌿 Vegano</span>
+                            <span class="text-xs px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition inline-block font-medium">🌿 Vegano</span>
                         </label>
                         <label class="cursor-pointer">
                             <input type="checkbox" name="diet" value="Sem Glúten" class="sr-only peer">
-                            <span class="text-xs px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition inline-block">🌾 Sem Glúten</span>
+                            <span class="text-xs px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition inline-block font-medium">🌾 Sem Glúten</span>
                         </label>
                         <label class="cursor-pointer">
                             <input type="checkbox" name="diet" value="Low Carb" class="sr-only peer">
-                            <span class="text-xs px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition inline-block">🥑 Low Carb</span>
+                            <span class="text-xs px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition inline-block font-medium">🥑 Low Carb</span>
                         </label>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Submit Button -->
-            <div class="mt-8">
+            <!-- Submit Button (Desktop/Standard) -->
+            <div class="mt-6 sm:mt-8">
                 <button onclick="generateRecipe()" id="btnGenerate" 
-                    class="btn-magic w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold text-lg rounded-2xl shadow-lg transition flex items-center justify-center gap-3 active:scale-[0.99]">
-                    <i class="fa-solid fa-wand-magic-sparkles text-amber-300 text-xl"></i>
+                    class="btn-magic w-full py-3.5 sm:py-4 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold text-base sm:text-lg rounded-xl sm:rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 active:scale-[0.99]">
+                    <i class="fa-solid fa-wand-magic-sparkles text-amber-300 text-lg sm:text-xl"></i>
                     <span>Create My Recipe</span>
                 </button>
             </div>
         </section>
 
-        <!-- Loading State Skeleton -->
-        <section id="loadingSection" class="hidden max-w-4xl mx-auto glass-card rounded-3xl p-8 text-center space-y-6">
-            <div class="relative w-20 h-20 mx-auto">
-                <div class="w-20 h-20 rounded-full border-4 border-emerald-200 border-t-emerald-600 animate-spin"></div>
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <i class="fa-solid fa-kitchen-set text-emerald-600 text-xl"></i>
-                </div>
+        <!-- Loading Indicator Section -->
+        <section id="loadingSection" class="hidden max-w-4xl mx-auto glass-card rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center space-y-4 shadow-xl border border-slate-200">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center text-2xl animate-bounce">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
             </div>
-            <div class="space-y-2">
-                <h3 id="loadingText" class="text-xl font-bold text-slate-800">Consultando o FoodGenie IA...</h3>
-                <p class="text-slate-500 text-sm">Analisando sabores, combinando ingredientes e calculando a melhor receita!</p>
-            </div>
+            <h3 class="text-xl font-bold text-slate-800">Criando sua Receita Mágica...</h3>
+            <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">A IA está analisando seus ingredientes e montando uma receita deliciosa com o mínimo de desperdício.</p>
         </section>
 
         <!-- Recipe Display Section -->
-        <section id="recipeSection" class="hidden max-w-4xl mx-auto glass-card rounded-3xl overflow-hidden shadow-2xl border border-slate-200 transition-all duration-500">
+        <section id="recipeSection" class="hidden max-w-4xl mx-auto glass-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl border border-slate-200 transition-all duration-500">
             
             <!-- Top Banner / Image -->
-            <div class="relative bg-gradient-to-r from-emerald-800 to-slate-900 text-white p-6 sm:p-10 overflow-hidden">
-                <div id="recipeBgDecoration" class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
+            <div class="relative bg-gradient-to-br from-emerald-800 via-emerald-900 to-slate-900 text-white p-5 sm:p-10 overflow-hidden">
+                <div id="recipeBgDecoration" class="absolute -right-8 -bottom-8 opacity-10 text-8xl sm:text-9xl pointer-events-none">
                     <i class="fa-solid fa-utensils"></i>
                 </div>
 
-                <div class="relative z-10 space-y-4">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                        <span id="recipeCategoryBadge" class="bg-amber-400 text-amber-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                <div class="relative z-10 space-y-3 sm:space-y-4">
+                    <div class="flex items-center justify-between gap-2">
+                        <span id="recipeCategoryBadge" class="bg-amber-400 text-amber-950 text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
                             Receita Desperdício Zero
                         </span>
                         <div class="flex items-center gap-2">
-                            <button onclick="speakRecipe()" id="btnAudio" title="Ouvir receita" class="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition backdrop-blur-md">
-                                <i class="fa-solid fa-volume-high"></i>
+                            <button onclick="speakRecipe()" id="btnAudio" title="Ouvir receita" class="p-2 sm:p-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/30 text-white transition backdrop-blur-md">
+                                <i class="fa-solid fa-volume-high text-sm sm:text-base"></i>
                             </button>
-                            <button onclick="toggleSaveCurrentRecipe()" id="btnSaveRecipe" title="Salvar em Favoritos" class="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition backdrop-blur-md">
-                                <i class="fa-regular fa-bookmark text-lg" id="btnSaveIcon"></i>
+                            <button onclick="toggleSaveCurrentRecipe()" id="btnSaveRecipe" title="Salvar em Favoritos" class="p-2 sm:p-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/30 text-white transition backdrop-blur-md">
+                                <i class="fa-regular fa-bookmark text-sm sm:text-base" id="btnSaveIcon"></i>
                             </button>
                         </div>
                     </div>
 
-                    <h2 id="recipeTitle" class="text-2xl sm:text-4xl font-extrabold leading-tight">Nome da Receita</h2>
-                    <p id="recipeDescription" class="text-emerald-100 text-sm sm:text-base leading-relaxed max-w-2xl">Descrição charmosa da receita.</p>
+                    <h2 id="recipeTitle" class="text-xl sm:text-4xl font-extrabold leading-tight">Nome da Receita</h2>
+                    <p id="recipeDescription" class="text-emerald-100 text-xs sm:text-base leading-relaxed max-w-2xl">Descrição charmosa da receita.</p>
 
                     <!-- Key Stats Grid -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-emerald-700/60">
-                        <div class="bg-white/10 backdrop-blur-md p-3 rounded-2xl text-center">
-                            <span class="block text-xs text-emerald-200">Tempo</span>
-                            <span id="recipeTime" class="font-bold text-sm sm:text-base">25 min</span>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 pt-3 border-t border-emerald-700/60">
+                        <div class="bg-white/10 backdrop-blur-md p-2.5 sm:p-3 rounded-xl sm:rounded-2xl text-center">
+                            <span class="block text-[10px] sm:text-xs text-emerald-200 font-medium">Tempo</span>
+                            <span id="recipeTime" class="font-bold text-xs sm:text-base">25 min</span>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-md p-3 rounded-2xl text-center">
-                            <span class="block text-xs text-emerald-200">Dificuldade</span>
-                            <span id="recipeDifficulty" class="font-bold text-sm sm:text-base">Fácil</span>
+                        <div class="bg-white/10 backdrop-blur-md p-2.5 sm:p-3 rounded-xl sm:rounded-2xl text-center">
+                            <span class="block text-[10px] sm:text-xs text-emerald-200 font-medium">Dificuldade</span>
+                            <span id="recipeDifficulty" class="font-bold text-xs sm:text-base">Fácil</span>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-md p-3 rounded-2xl text-center">
-                            <span class="block text-xs text-emerald-200">Rendimento</span>
-                            <span id="recipeServings" class="font-bold text-sm sm:text-base">2 porções</span>
+                        <div class="bg-white/10 backdrop-blur-md p-2.5 sm:p-3 rounded-xl sm:rounded-2xl text-center">
+                            <span class="block text-[10px] sm:text-xs text-emerald-200 font-medium">Rendimento</span>
+                            <span id="recipeServings" class="font-bold text-xs sm:text-base">2 porções</span>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-md p-3 rounded-2xl text-center">
-                            <span class="block text-xs text-emerald-200">Calorias (aprox)</span>
-                            <span id="recipeCalories" class="font-bold text-sm sm:text-base">350 kcal</span>
+                        <div class="bg-white/10 backdrop-blur-md p-2.5 sm:p-3 rounded-xl sm:rounded-2xl text-center">
+                            <span class="block text-[10px] sm:text-xs text-emerald-200 font-medium">Calorias (aprox)</span>
+                            <span id="recipeCalories" class="font-bold text-xs sm:text-base">350 kcal</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Content Body -->
-            <div class="p-6 sm:p-8 space-y-8">
+            <div class="p-4 sm:p-8 space-y-6 sm:space-y-8">
 
                 <!-- Ingredient Utilization Progress Bar -->
-                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 p-5 rounded-2xl space-y-3">
+                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/90 p-4 sm:p-5 rounded-2xl space-y-2.5">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-sm">
+                            <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
                                 <i class="fa-solid fa-chart-pie"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold text-slate-800 text-sm">Aproveitamento de Ingredientes</h4>
-                                <p class="text-xs text-slate-500" id="matchBadgeText">Ótimo uso do que você tem em casa!</p>
+                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm">Aproveitamento de Ingredientes</h4>
+                                <p class="text-[11px] sm:text-xs text-slate-500" id="matchBadgeText">Ótimo uso do que você tem em casa!</p>
                             </div>
                         </div>
-                        <span id="matchPercentageText" class="text-2xl font-black text-emerald-700">85%</span>
+                        <span id="matchPercentageText" class="text-xl sm:text-2xl font-black text-emerald-700 ml-2">85%</span>
                     </div>
 
-                    <div class="w-full bg-emerald-200/60 rounded-full h-3 overflow-hidden">
-                        <div id="matchProgressBar" class="bg-emerald-600 h-3 rounded-full transition-all duration-1000" style="width: 85%;"></div>
+                    <div class="w-full bg-emerald-200/60 rounded-full h-2.5 sm:h-3 overflow-hidden">
+                        <div id="matchProgressBar" class="bg-emerald-600 h-full rounded-full transition-all duration-1000" style="width: 85%;"></div>
                     </div>
                 </div>
 
                 <!-- AI Image Generation Banner Slot -->
                 <div id="imageGenContainer" class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-100 relative group">
-                    <div id="imagePlaceholder" class="p-8 text-center space-y-3">
-                        <i class="fa-solid fa-camera-retro text-3xl text-slate-400"></i>
-                        <p class="text-sm font-medium text-slate-600">Deseja visualizar como esta receita deve se parecer?</p>
-                        <button onclick="generateRecipeImage()" id="btnGenImage" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold transition inline-flex items-center gap-2 shadow">
+                    <div id="imagePlaceholder" class="p-5 sm:p-8 text-center space-y-2.5">
+                        <i class="fa-solid fa-camera-retro text-2xl sm:text-3xl text-slate-400"></i>
+                        <p class="text-xs sm:text-sm font-medium text-slate-600">Deseja visualizar como esta receita deve se parecer?</p>
+                        <button onclick="generateRecipeImage()" id="btnGenImage" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold transition inline-flex items-center gap-2 shadow active:scale-95">
                             <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Gerar Foto com IA
                         </button>
                     </div>
-                    <img id="recipeImage" class="hidden w-full h-64 sm:h-80 object-cover rounded-2xl" alt="Foto da receita gerada por IA">
+                    <img id="recipeImage" class="hidden w-full h-52 sm:h-80 object-cover rounded-2xl" alt="Foto da receita gerada por IA">
                 </div>
 
                 <!-- Ingredients Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     <!-- Available Used -->
-                    <div class="space-y-3">
-                        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                    <div class="space-y-2.5">
+                        <h3 class="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
                             <i class="fa-solid fa-circle-check text-emerald-600"></i> Ingredientes Utilizados
                         </h3>
                         <ul id="usedIngredientsList" class="space-y-2">
@@ -331,8 +344,8 @@
                     </div>
 
                     <!-- Missing / Optional -->
-                    <div class="space-y-3">
-                        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                    <div class="space-y-2.5">
+                        <h3 class="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
                             <i class="fa-solid fa-basket-shopping text-amber-500"></i> Opcionais ou Faltantes
                         </h3>
                         <ul id="missingIngredientsList" class="space-y-2">
@@ -342,50 +355,50 @@
                 </div>
 
                 <!-- Step by step instructions -->
-                <div class="space-y-4 pt-4 border-t border-slate-200">
+                <div class="space-y-3 pt-3 border-t border-slate-200">
                     <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-slate-800 text-xl flex items-center gap-2">
+                        <h3 class="font-bold text-slate-800 text-lg sm:text-xl flex items-center gap-2">
                             <i class="fa-solid fa-list-check text-emerald-600"></i> Modo de Preparo
                         </h3>
-                        <span class="text-xs text-slate-400">Clique nas etapas conforme avança</span>
+                        <span class="text-[11px] sm:text-xs text-slate-400">Toque no passo concluído</span>
                     </div>
 
-                    <div id="stepsList" class="space-y-3">
+                    <div id="stepsList" class="space-y-2.5">
                         <!-- Filled dynamically -->
                     </div>
                 </div>
 
                 <!-- Chef's Tip Box -->
-                <div id="chefTipBox" class="p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-3">
-                    <i class="fa-solid fa-lightbulb text-amber-600 text-xl mt-0.5"></i>
-                    <div class="space-y-1">
-                        <h4 class="font-bold text-amber-900 text-sm">Dica do FoodGenie</h4>
-                        <p id="chefTipText" class="text-amber-800 text-xs sm:text-sm">Substitutos e truques para deixar este prato ainda mais gostoso.</p>
+                <div id="chefTipBox" class="p-3.5 sm:p-4 bg-amber-50 border border-amber-200/90 rounded-xl sm:rounded-2xl flex items-start gap-3">
+                    <i class="fa-solid fa-lightbulb text-amber-600 text-lg sm:text-xl mt-0.5"></i>
+                    <div class="space-y-0.5">
+                        <h4 class="font-bold text-amber-900 text-xs sm:text-sm">Dica Anti-Desperdício</h4>
+                        <p id="chefTipText" class="text-amber-800 text-xs sm:text-sm leading-relaxed">Substitutos e truques para deixar este prato ainda mais gostoso.</p>
                     </div>
                 </div>
 
                 <!-- Interactive AI Chef Assistant -->
-                <div class="bg-slate-900 text-white rounded-2xl p-5 space-y-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold">
-                            <i class="fa-solid fa-robot"></i>
+                <div class="bg-slate-900 text-white rounded-xl sm:rounded-2xl p-4 sm:p-5 space-y-3 sm:space-y-4">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold shrink-0">
+                            <i class="fa-solid fa-robot text-xs sm:text-sm"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-sm">Assistente da Receita</h4>
-                            <p class="text-xs text-slate-400">Tem alguma dúvida sobre substituições ou modo de preparo?</p>
+                            <h4 class="font-bold text-xs sm:text-sm">Assistente da Receita</h4>
+                            <p class="text-[11px] sm:text-xs text-slate-400">Dúvidas sobre o preparo ou trocas de ingredientes?</p>
                         </div>
                     </div>
 
-                    <div id="chatHistory" class="max-h-40 overflow-y-auto space-y-2 text-xs bg-slate-800/60 p-3 rounded-xl">
-                        <p class="text-slate-400 italic">Exemplo: "Posso substituir a cebola por alho-poró?" ou "Como fazer na Airfryer?"</p>
+                    <div id="chatHistory" class="max-h-36 overflow-y-auto space-y-2 text-xs bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
+                        <p class="text-slate-400 italic">Exemplo: "Posso fazer na Airfryer?" ou "Como substituir a cebola?"</p>
                     </div>
 
                     <div class="flex gap-2">
-                        <input type="text" id="chefQueryInput" placeholder="Faça uma pergunta sobre esta receita..." 
+                        <input type="text" id="chefQueryInput" placeholder="Sua pergunta sobre a receita..." 
                             class="flex-grow bg-slate-800 border border-slate-700 text-white text-xs rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500"
                             onkeypress="if(event.key === 'Enter') askChefAssistant()">
-                        <button onclick="askChefAssistant()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 font-semibold text-xs rounded-xl transition">
-                            Perguntar
+                        <button onclick="askChefAssistant()" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 font-semibold text-xs rounded-xl transition shrink-0">
+                            Enviar
                         </button>
                     </div>
                 </div>
@@ -395,16 +408,27 @@
 
     </main>
 
-    <!-- Saved Recipes Modal / Drawer -->
-    <div id="favoritesModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex justify-end transition-opacity">
-        <div class="w-full max-w-md bg-white h-full shadow-2xl flex flex-col">
-            <div class="p-5 border-b border-slate-200 flex items-center justify-between">
+    <!-- Mobile Floating Quick Action Bar (Visible when ingredients exist) -->
+    <div id="mobileFloatingBar" class="fixed bottom-3 inset-x-3 sm:hidden z-30 transition-all transform translate-y-20 opacity-0">
+        <button onclick="generateRecipe()" class="w-full py-3.5 px-4 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-bold rounded-2xl shadow-2xl flex items-center justify-between border border-emerald-400/30 active:scale-98">
+            <span class="flex items-center gap-2 text-sm">
+                <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                <span>Criar Receita</span>
+            </span>
+            <span id="mobileIngBadge" class="bg-emerald-900/60 text-emerald-200 text-xs font-semibold px-2.5 py-1 rounded-xl">0 itens</span>
+        </button>
+    </div>
+
+    <!-- Saved Recipes Modal / Mobile Bottom Sheet -->
+    <div id="favoritesModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex justify-end items-end sm:items-stretch transition-opacity">
+        <div class="w-full sm:max-w-md bg-white h-[85vh] sm:h-full rounded-t-3xl sm:rounded-none shadow-2xl flex flex-col transition-transform duration-300">
+            <div class="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-bookmark text-amber-500"></i>
-                    <h3 class="font-bold text-slate-800 text-lg">Minhas Receitas Favoritas</h3>
+                    <h3 class="font-bold text-slate-800 text-base sm:text-lg">Minhas Receitas Salvas</h3>
                 </div>
-                <button onclick="closeFavoritesModal()" class="text-slate-400 hover:text-slate-600 p-1">
-                    <i class="fa-solid fa-xmark text-xl"></i>
+                <button onclick="closeFavoritesModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100">
+                    <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
@@ -412,18 +436,12 @@
                 <!-- Filled dynamically -->
             </div>
 
-            <div class="p-4 border-t border-slate-200 text-center">
-                <button onclick="clearAllFavorites()" class="text-xs text-red-500 hover:underline">
+            <div class="p-4 border-t border-slate-200 text-center bg-slate-50">
+                <button onclick="clearAllFavorites()" class="text-xs font-medium text-red-500 hover:underline">
                     Limpar todas as receitas salvas
                 </button>
             </div>
         </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm transition-all">
-        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
-        <span id="toastMessage">Notificação</span>
     </div>
 
     <script>
@@ -445,37 +463,65 @@
             updateFavoritesBadge();
         });
 
-        // Toast Helper
-        function showToast(msg, icon = 'fa-circle-check text-emerald-400') {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMessage').innerText = msg;
-            document.getElementById('toastIcon').className = `fa-solid ${icon}`;
-            toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 3000);
-        }
-
-        // Time Filter Selection
-        function selectTime(minutes) {
-            state.maxTime = minutes;
+        // Time selection handler
+        function selectTime(time) {
+            state.maxTime = time;
             document.querySelectorAll('.time-btn').forEach(btn => {
                 const btnTime = btn.getAttribute('data-time');
-                if (btnTime == minutes) {
-                    btn.className = 'time-btn py-2 text-xs font-semibold rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-700 transition text-center';
+                if ((btnTime === 'any' && time === 'any') || (btnTime == time)) {
+                    btn.className = 'time-btn py-2.5 text-xs font-semibold rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-700 transition text-center';
                 } else {
-                    btn.className = 'time-btn py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-emerald-500 transition text-center';
+                    btn.className = 'time-btn py-2.5 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-emerald-500 active:bg-emerald-50 transition text-center';
                 }
             });
+        }
+
+        // Toast notification system
+        function showToast(message, iconClass = 'fa-circle-check text-emerald-400') {
+            let toast = document.getElementById('toastNotification');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toastNotification';
+                toast.className = 'fixed top-5 right-5 z-50 flex items-center gap-2.5 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl transition-all duration-300 transform -translate-y-5 opacity-0 text-xs font-medium';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${message}</span>`;
+            
+            requestAnimationFrame(() => {
+                toast.classList.remove('-translate-y-5', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            });
+
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('-translate-y-5', 'opacity-0');
+            }, 3000);
         }
 
         // Ingredient Management Functions
         function renderIngredients() {
             const container = document.getElementById('ingredientsContainer');
             const placeholder = document.getElementById('emptyIngredientsPlaceholder');
+            const ingCountBadge = document.getElementById('ingCountBadge');
+            const mobileFloatingBar = document.getElementById('mobileFloatingBar');
+            const mobileIngBadge = document.getElementById('mobileIngBadge');
             
             // Remove existing badges
             container.querySelectorAll('.ing-badge').forEach(el => el.remove());
+
+            // Update badge counts
+            ingCountBadge.innerText = `${state.ingredients.length} ${state.ingredients.length === 1 ? 'item' : 'itens'}`;
+            mobileIngBadge.innerText = `${state.ingredients.length} ${state.ingredients.length === 1 ? 'item' : 'itens'}`;
+
+            // Handle Mobile Floating Quick Action Bar visibility
+            if (state.ingredients.length > 0) {
+                mobileFloatingBar.classList.remove('translate-y-20', 'opacity-0');
+                mobileFloatingBar.classList.add('translate-y-0', 'opacity-100');
+            } else {
+                mobileFloatingBar.classList.add('translate-y-20', 'opacity-0');
+                mobileFloatingBar.classList.remove('translate-y-0', 'opacity-100');
+            }
 
             if (state.ingredients.length === 0) {
                 if (placeholder) placeholder.style.display = 'block';
@@ -486,11 +532,11 @@
 
             state.ingredients.forEach((ing, idx) => {
                 const badge = document.createElement('div');
-                badge.className = 'ing-badge bg-white border border-slate-200 text-slate-800 text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-sm hover:border-emerald-500 transition animate-fade-in';
+                badge.className = 'ing-badge bg-white border border-slate-200/90 text-slate-800 text-xs font-semibold px-2.5 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm active:scale-95 transition-transform';
                 badge.innerHTML = `
                     <span>${ing}</span>
-                    <button onclick="removeIngredient(${idx})" class="text-slate-400 hover:text-red-500 transition">
-                        <i class="fa-solid fa-xmark"></i>
+                    <button onclick="removeIngredient(${idx})" class="text-slate-400 hover:text-red-500 p-0.5 transition">
+                        <i class="fa-solid fa-xmark text-xs"></i>
                     </button>
                 `;
                 container.appendChild(badge);
@@ -533,176 +579,15 @@
                 try {
                     const res = await fetch(url, options);
                     if (res.ok) return await res.json();
+                    const errBody = await res.text();
+                    console.warn(`Tentativa ${i + 1} falhou com status ${res.status}:`, errBody);
                 } catch (err) {
                     if (i === maxRetries - 1) throw err;
                 }
                 await new Promise(r => setTimeout(r, delay));
                 delay *= 2;
             }
-        }
-
-        // Generate Recipe with Gemini
-        async function generateRecipe() {
-            if (state.ingredients.length === 0) {
-                showToast('Por favor, adicione pelo menos um ingrediente!', 'fa-triangle-exclamation text-amber-400');
-                return;
-            }
-
-            // Gather options
-            state.strictOnly = document.getElementById('strictModeToggle').checked;
-            state.diets = Array.from(document.querySelectorAll('input[name="diet"]:checked')).map(el => el.value);
-
-            // Toggle Loading UI
-            document.getElementById('recipeSection').classList.add('hidden');
-            document.getElementById('loadingSection').classList.remove('hidden');
-            document.getElementById('btnGenerate').disabled = true;
-
-            const systemPrompt = `Você é um Chef Profissional especializado em Cozinha Anti-Desperdício (Zero Waste Cooking).
-Sua missão é criar uma receita prática, muito saborosa e realista baseada prioritariamente nos ingredientes fornecidos pelo usuário.
-
-REGRAS:
-1. Retorne ESTRITAMENTE um objeto JSON válido.
-2. Não inclua trechos Markdown adicionais de texto fora do JSON.
-3. Se 'strictOnly' for true, tente usar praticamente APENAS os ingredientes fornecidos e itens ultra-básicos de despensa (sal, óleo, água, pimenta).
-4. Calcule 'matchPercentage' (0 a 100) representando a taxa de utilização dos ingredientes que o usuário tem.`;
-
-            const userPrompt = `Ingredientes disponíveis: ${state.ingredients.join(', ')}
-Tempo máximo disponível: ${state.maxTime === 'any' ? 'Indiferente' : state.maxTime + ' minutos'}
-Usar apenas o que tenho (Strict): ${state.strictOnly}
-Restrições/Preferências alimentares: ${state.diets.length > 0 ? state.diets.join(', ') : 'Nenhuma'}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userPrompt }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            recipeTitle: { type: "STRING" },
-                            category: { type: "STRING" },
-                            description: { type: "STRING" },
-                            prepTimeMinutes: { type: "NUMBER" },
-                            difficulty: { type: "STRING" },
-                            servings: { type: "STRING" },
-                            caloriesApprox: { type: "NUMBER" },
-                            matchPercentage: { type: "NUMBER" },
-                            usedIngredients: {
-                                type: "ARRAY",
-                                items: { type: "STRING" }
-                            },
-                            missingIngredients: {
-                                type: "ARRAY",
-                                items: { type: "STRING" }
-                            },
-                            instructions: {
-                                type: "ARRAY",
-                                items: { type: "STRING" }
-                            },
-                            chefTip: { type: "STRING" }
-                        },
-                        required: ["recipeTitle", "description", "prepTimeMinutes", "difficulty", "servings", "matchPercentage", "usedIngredients", "instructions", "chefTip"]
-                    }
-                }
-            };
-
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-            try {
-                const data = await fetchWithBackoff(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const rawJsonText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!rawJsonText) throw new Error('Não foi possível gerar a receita.');
-
-                const recipe = JSON.parse(rawJsonText);
-                state.currentRecipe = recipe;
-                displayRecipe(recipe);
-
-            } catch (error) {
-                console.error(error);
-                showToast('Erro ao criar receita. Tente novamente.', 'fa-circle-xmark text-red-400');
-            } finally {
-                document.getElementById('loadingSection').classList.add('hidden');
-                document.getElementById('btnGenerate').disabled = false;
-            }
-        }
-
-        // Display Generated Recipe
-        function displayRecipe(recipe) {
-            document.getElementById('recipeTitle').innerText = recipe.recipeTitle;
-            document.getElementById('recipeDescription').innerText = recipe.description;
-            document.getElementById('recipeCategoryBadge').innerText = recipe.category || "Cozinha Inteligente";
-            document.getElementById('recipeTime').innerText = `${recipe.prepTimeMinutes} min`;
-            document.getElementById('recipeDifficulty').innerText = recipe.difficulty;
-            document.getElementById('recipeServings').innerText = recipe.servings;
-            document.getElementById('recipeCalories').innerText = recipe.caloriesApprox ? `~${recipe.caloriesApprox} kcal` : 'Saboroso';
-
-            // Match Gauge
-            const match = Math.min(100, Math.max(10, recipe.matchPercentage || 80));
-            document.getElementById('matchPercentageText').innerText = `${match}%`;
-            document.getElementById('matchProgressBar').style.width = `${match}%`;
-
-            if (match >= 85) {
-                document.getElementById('matchBadgeText').innerText = "Excelente! Mínimo ou nenhum ingrediente extra necessário.";
-            } else if (match >= 60) {
-                document.getElementById('matchBadgeText').innerText = "Bom uso dos seus ingredientes disponíveis.";
-            } else {
-                document.getElementById('matchBadgeText').innerText = "Alguns itens adicionais foram sugeridos para dar sabor.";
-            }
-
-            // Used ingredients list
-            const usedList = document.getElementById('usedIngredientsList');
-            usedList.innerHTML = recipe.usedIngredients.map(ing => `
-                <li class="flex items-center gap-2 text-xs sm:text-sm text-slate-700 bg-emerald-50 border border-emerald-200/70 p-2.5 rounded-xl">
-                    <i class="fa-solid fa-check text-emerald-600"></i>
-                    <span>${ing}</span>
-                </li>
-            `).join('');
-
-            // Missing / Optional list
-            const missingList = document.getElementById('missingIngredientsList');
-            if (recipe.missingIngredients && recipe.missingIngredients.length > 0) {
-                missingList.innerHTML = recipe.missingIngredients.map(ing => `
-                    <li class="flex items-center gap-2 text-xs sm:text-sm text-slate-700 bg-amber-50 border border-amber-200/70 p-2.5 rounded-xl">
-                        <i class="fa-solid fa-plus text-amber-500"></i>
-                        <span>${ing}</span>
-                    </li>
-                `).join('');
-            } else {
-                missingList.innerHTML = `
-                    <li class="text-xs text-slate-500 italic p-2.5">Nenhum ingrediente adicional necessário!</li>
-                `;
-            }
-
-            // Instructions steps with checkboxes
-            const stepsList = document.getElementById('stepsList');
-            stepsList.innerHTML = recipe.instructions.map((step, idx) => `
-                <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-200">
-                    <input type="checkbox" id="step_${idx}" class="step-checkbox mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
-                    <label for="step_${idx}" class="text-sm text-slate-700 leading-relaxed cursor-pointer select-none">
-                        <span class="font-bold text-slate-900 mr-1">Passo ${idx + 1}:</span> ${step}
-                    </label>
-                </div>
-            `).join('');
-
-            // Chef Tip
-            document.getElementById('chefTipText').innerText = recipe.chefTip || "Experimente finalizar com ervas frescas!";
-
-            // Reset AI Image state
-            document.getElementById('imagePlaceholder').classList.remove('hidden');
-            document.getElementById('recipeImage').classList.add('hidden');
-
-            // Reset Bookmark Icon
-            updateBookmarkIcon();
-
-            // Show section with smooth scroll
-            const recipeSection = document.getElementById('recipeSection');
-            recipeSection.classList.remove('hidden');
-            recipeSection.scrollIntoView({ behavior: 'smooth' });
+            throw new Error('Não foi possível conectar ao servidor após múltiplas tentativas.');
         }
 
         // AI Image Generation Function
@@ -711,18 +596,25 @@ Restrições/Preferências alimentares: ${state.diets.length > 0 ? state.diets.j
 
             const btn = document.getElementById('btnGenImage');
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Gerando Foto...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Gerando Foto com IA...`;
 
-            const imagePrompt = `Fotografia gastronômica profissional, iluminação de estúdio aquecida, ângulo superior de 45 graus, do prato: ${state.currentRecipe.recipeTitle}. Apresentação apetitosa de restaurante gourmet em prato elegante.`;
+            const usedIngs = state.currentRecipe.usedIngredients ? state.currentRecipe.usedIngredients.slice(0, 4).join(', ') : '';
+            const imagePrompt = `Fotografia gastronômica profissional e realista, alta resolução, iluminação natural suave de estúdio, ângulo de 45 graus mostrando o prato pronto: ${state.currentRecipe.recipeTitle}. Apresentação elegante em prato de restaurante gourmet. Ingredientes principais visíveis: ${usedIngs}.`;
 
             const payload = {
-                contents: [{ parts: [{ text: imagePrompt }] }],
+                contents: [{
+                    role: 'user',
+                    parts: [{ text: imagePrompt }]
+                }],
                 generationConfig: {
-                    responseModalities: ['TEXT', 'IMAGE']
+                    responseModalities: ['IMAGE'],
+                    imageConfig: {
+                        aspectRatio: "16:9"
+                    }
                 }
             };
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-image:generateContent?key=${apiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`;
 
             try {
                 const result = await fetchWithBackoff(url, {
@@ -731,19 +623,21 @@ Restrições/Preferências alimentares: ${state.diets.length > 0 ? state.diets.j
                     body: JSON.stringify(payload)
                 });
 
-                const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+                const part = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
                 
-                if (base64Data) {
+                if (part && part.inlineData?.data) {
+                    const mimeType = part.inlineData.mimeType || 'image/png';
                     const imgEl = document.getElementById('recipeImage');
-                    imgEl.src = `data:image/png;base64,${base64Data}`;
+                    imgEl.src = `data:${mimeType};base64,${part.inlineData.data}`;
                     imgEl.classList.remove('hidden');
                     document.getElementById('imagePlaceholder').classList.add('hidden');
+                    showToast('Foto da receita gerada com sucesso!', 'fa-wand-magic-sparkles text-amber-400');
                 } else {
-                    showToast('Não foi possível gerar a imagem no momento.', 'fa-circle-xmark text-red-400');
+                    showToast('Não foi possível obter a imagem. Tente novamente.', 'fa-triangle-exclamation text-amber-400');
                 }
             } catch (e) {
-                console.error(e);
-                showToast('Erro ao criar imagem.', 'fa-circle-xmark text-red-400');
+                console.error('Erro ao gerar imagem:', e);
+                showToast('Erro ao criar imagem com a IA.', 'fa-circle-xmark text-red-400');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Gerar Foto com IA`;
