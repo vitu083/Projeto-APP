@@ -572,6 +572,171 @@
             renderIngredients();
         }
 
+        // Função principal de geração de receita com IA Gemini
+        async function generateRecipe() {
+            if (state.ingredients.length === 0) {
+                showToast('Adicione pelo menos 1 ingrediente!', 'fa-circle-exclamation text-amber-400');
+                return;
+            }
+
+            const loadingSection = document.getElementById('loadingSection');
+            const recipeSection = document.getElementById('recipeSection');
+            
+            recipeSection.classList.add('hidden');
+            loadingSection.classList.remove('hidden');
+            loadingSection.scrollIntoView({ behavior: 'smooth' });
+
+            const strictMode = document.getElementById('strictModeToggle').checked;
+            const selectedDiets = Array.from(document.querySelectorAll('input[name="diet"]:checked')).map(cb => cb.value);
+
+            const userPrompt = `
+Ingredientes disponíveis: ${state.ingredients.join(', ')}
+Tempo limite de preparo: ${state.maxTime === 'any' ? 'Sem limite' : state.maxTime + ' minutos'}
+Regra estrita (usar prioritariamente os ingredientes informados): ${strictMode ? 'Sim, evite exigir outros ingredientes' : 'Não, pode sugerir itens comuns de despensa'}
+Restrições/Preferências alimentares: ${selectedDiets.length > 0 ? selectedDiets.join(', ') : 'Nenhuma'}
+
+Crie uma receita deliciosa, criativa e fácil de fazer com foco em combate ao desperdício de alimentos. Responda em Português do Brasil.
+            `;
+
+            const systemPrompt = "Você é um Chef executivo especialista em culinária sustentável e receitas anti-desperdício. Crie receitas viáveis, saborosas e bem explicadas.";
+
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            recipeTitle: { type: "STRING" },
+                            description: { type: "STRING" },
+                            prepTimeMinutes: { type: "NUMBER" },
+                            difficulty: { type: "STRING" },
+                            servings: { type: "STRING" },
+                            caloriesEstimate: { type: "STRING" },
+                            matchPercentage: { type: "NUMBER" },
+                            usedIngredients: {
+                                type: "ARRAY",
+                                items: { type: "STRING" }
+                            },
+                            missingIngredients: {
+                                type: "ARRAY",
+                                items: { type: "STRING" }
+                            },
+                            instructions: {
+                                type: "ARRAY",
+                                items: { type: "STRING" }
+                            },
+                            chefTip: { type: "STRING" }
+                        },
+                        propertyOrdering: [
+                            "recipeTitle", "description", "prepTimeMinutes", "difficulty", 
+                            "servings", "caloriesEstimate", "matchPercentage", 
+                            "usedIngredients", "missingIngredients", "instructions", "chefTip"
+                        ]
+                    }
+                }
+            };
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            try {
+                const data = await fetchWithBackoff(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const rawJson = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!rawJson) {
+                    throw new Error("Resposta inválida da IA");
+                }
+
+                const recipe = JSON.parse(rawJson);
+                displayRecipe(recipe);
+                showToast('Receita gerada com sucesso!', 'fa-wand-magic-sparkles text-amber-400');
+            } catch (err) {
+                console.error('Erro ao gerar receita:', err);
+                showToast('Não foi possível gerar a receita. Tente novamente.', 'fa-circle-xmark text-red-400');
+            } finally {
+                loadingSection.classList.add('hidden');
+            }
+        }
+
+        // Renderiza a receita gerada na interface
+        function displayRecipe(recipe) {
+            state.currentRecipe = recipe;
+
+            // Preenche Título e Infos Básicas
+            document.getElementById('recipeTitle').innerText = recipe.recipeTitle || 'Receita Personalizada';
+            document.getElementById('recipeDescription').innerText = recipe.description || '';
+            document.getElementById('recipeTime').innerText = `${recipe.prepTimeMinutes || 20} min`;
+            document.getElementById('recipeDifficulty').innerText = recipe.difficulty || 'Fácil';
+            document.getElementById('recipeServings').innerText = recipe.servings || '2 porções';
+            document.getElementById('recipeCalories').innerText = recipe.caloriesEstimate || '300 kcal';
+
+            // Porcentagem e Barra de Aproveitamento
+            const match = Math.min(100, Math.max(10, recipe.matchPercentage || 85));
+            document.getElementById('matchPercentageText').innerText = `${match}%`;
+            document.getElementById('matchProgressBar').style.width = `${match}%`;
+
+            // Lista de Ingredientes Utilizados
+            const usedList = document.getElementById('usedIngredientsList');
+            usedList.innerHTML = (recipe.usedIngredients || []).map(ing => `
+                <li class="flex items-center gap-2 text-xs sm:text-sm text-slate-700 bg-emerald-50/60 border border-emerald-100 p-2 sm:p-2.5 rounded-xl">
+                    <i class="fa-solid fa-check text-emerald-600 font-bold shrink-0"></i>
+                    <span>${ing}</span>
+                </li>
+            `).join('');
+
+            // Lista de Ingredientes Faltantes / Opcionais
+            const missingList = document.getElementById('missingIngredientsList');
+            if (!recipe.missingIngredients || recipe.missingIngredients.length === 0) {
+                missingList.innerHTML = `
+                    <li class="text-xs text-emerald-700 bg-slate-50 border border-slate-200 p-2.5 rounded-xl italic">
+                        🎉 Nenhum ingrediente extra necessário! Você tem tudo em casa.
+                    </li>
+                `;
+            } else {
+                missingList.innerHTML = recipe.missingIngredients.map(ing => `
+                    <li class="flex items-center gap-2 text-xs sm:text-sm text-slate-600 bg-amber-50/50 border border-amber-100 p-2 sm:p-2.5 rounded-xl">
+                        <i class="fa-solid fa-cart-shopping text-amber-500 shrink-0"></i>
+                        <span>${ing}</span>
+                    </li>
+                `).join('');
+            }
+
+            // Modo de Preparo Interativo (com Checkbox)
+            const stepsList = document.getElementById('stepsList');
+            stepsList.innerHTML = (recipe.instructions || []).map((step, idx) => `
+                <div class="flex items-start gap-3 p-3 sm:p-3.5 bg-slate-50 hover:bg-emerald-50/40 rounded-xl border border-slate-200 transition group cursor-pointer">
+                    <input type="checkbox" id="step-${idx}" class="step-checkbox mt-1 rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4 shrink-0">
+                    <label for="step-${idx}" class="text-xs sm:text-sm text-slate-700 leading-relaxed cursor-pointer select-none">
+                        <strong class="text-emerald-700 mr-1">Passo ${idx + 1}:</strong> ${step}
+                    </label>
+                </div>
+            `).join('');
+
+            // Dica do Chef
+            document.getElementById('chefTipText').innerText = recipe.chefTip || 'Aproveite cascas, talos e sobras para evitar desperdício!';
+
+            // Reseta container de Imagem com IA
+            const recipeImg = document.getElementById('recipeImage');
+            recipeImg.src = '';
+            recipeImg.classList.add('hidden');
+            document.getElementById('imagePlaceholder').classList.remove('hidden');
+
+            // Reseta histórico do Assistente do Chef
+            document.getElementById('chatHistory').innerHTML = '<p class="text-slate-400 italic">Exemplo: "Posso fazer na Airfryer?" ou "Como substituir a cebola?"</p>';
+
+            // Exibe a seção da Receita e rola a tela até ela
+            const recipeSection = document.getElementById('recipeSection');
+            recipeSection.classList.remove('hidden');
+            recipeSection.scrollIntoView({ behavior: 'smooth' });
+
+            updateBookmarkIcon();
+        }
+
         // Helper: Exponential Backoff Fetch
         async function fetchWithBackoff(url, options, maxRetries = 3) {
             let delay = 1000;
