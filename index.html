@@ -99,6 +99,10 @@
             </div>
 
             <div class="flex items-center gap-2">
+                <button id="btnOpenApiKeyModal" onclick="openApiKeyModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-slate-700 hover:text-emerald-600 hover:bg-slate-100 active:bg-slate-200 transition text-sm font-semibold border border-slate-200/80">
+                    <i class="fa-solid fa-key text-amber-500 text-xs"></i>
+                    <span class="text-xs sm:text-sm">Chave API</span>
+                </button>
                 <button id="btnOpenFavorites" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-slate-700 hover:text-emerald-600 hover:bg-slate-100 active:bg-slate-200 transition text-sm font-semibold">
                     <i class="fa-solid fa-bookmark text-amber-500 text-base"></i>
                     <span class="text-xs sm:text-sm">Favoritas</span>
@@ -444,6 +448,41 @@
         </div>
     </div>
 
+    <!-- Modal para Configurar Chave da API Gemini -->
+    <div id="apiKeyModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-opacity">
+        <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-base">Configurar Chave API Gemini</h3>
+                </div>
+                <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Para usar a IA gerando receitas em abas externas ou fora do ambiente de testes, insira sua chave gratuita do Google AI Studio. Se preferir, você também pode usar o modo demonstrativo sem chave.
+            </p>
+
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-slate-700">Chave da API Gemini (opcional):</label>
+                <input type="password" id="apiKeyInput" placeholder="AIzaSy..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
+            </div>
+
+            <div class="bg-slate-50 p-3 rounded-xl text-[11px] text-slate-500 space-y-1 border border-slate-200">
+                <p>💡 <strong>Como obter grátis:</strong> Acesse <a href="https://aistudio.google.com/" target="_blank" class="text-emerald-600 font-bold underline">aistudio.google.com</a>, crie uma chave em segundos e cole acima.</p>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button onclick="closeApiKeyModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">Cancelar</button>
+                <button onclick="saveApiKey()" class="px-5 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-md transition">Salvar Chave</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Application State Variables
         let state = {
@@ -455,7 +494,33 @@
             favorites: JSON.parse(localStorage.getItem('foodgenie_favs') || '[]')
         };
 
-        const apiKey = ""; // Canvas runtime environment automatically inserts Gemini API Key here
+        let apiKey = ""; // Canvas runtime environment automatically inserts Gemini API Key here
+
+        function getEffectiveApiKey() {
+            return apiKey || localStorage.getItem('foodgenie_api_key') || "";
+        }
+
+        function openApiKeyModal() {
+            const storedKey = localStorage.getItem('foodgenie_api_key') || "";
+            document.getElementById('apiKeyInput').value = storedKey;
+            document.getElementById('apiKeyModal').classList.remove('hidden');
+        }
+
+        function closeApiKeyModal() {
+            document.getElementById('apiKeyModal').classList.add('hidden');
+        }
+
+        function saveApiKey() {
+            const keyVal = document.getElementById('apiKeyInput').value.trim();
+            if (keyVal) {
+                localStorage.setItem('foodgenie_api_key', keyVal);
+                showToast('Chave API salva com sucesso!', 'fa-key text-emerald-400');
+            } else {
+                localStorage.removeItem('foodgenie_api_key');
+                showToast('Chave removida. Usando modo demonstração.', 'fa-circle-info text-amber-400');
+            }
+            closeApiKeyModal();
+        }
 
         // Initialize App
         window.addEventListener('DOMContentLoaded', () => {
@@ -586,6 +651,18 @@
             loadingSection.classList.remove('hidden');
             loadingSection.scrollIntoView({ behavior: 'smooth' });
 
+            const activeApiKey = getEffectiveApiKey();
+
+            // Se não houver chave disponível, gera receita em modo demonstrativo
+            if (!activeApiKey) {
+                setTimeout(() => {
+                    generateFallbackRecipe();
+                    loadingSection.classList.add('hidden');
+                    showToast('Receita gerada em modo demonstração!', 'fa-wand-magic-sparkles text-amber-400');
+                }, 1000);
+                return;
+            }
+
             const strictMode = document.getElementById('strictModeToggle').checked;
             const selectedDiets = Array.from(document.querySelectorAll('input[name="diet"]:checked')).map(cb => cb.value);
 
@@ -638,7 +715,7 @@ Crie uma receita deliciosa, criativa e fácil de fazer com foco em combate ao de
                 }
             };
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${activeApiKey}`;
 
             try {
                 const data = await fetchWithBackoff(url, {
@@ -656,11 +733,40 @@ Crie uma receita deliciosa, criativa e fácil de fazer com foco em combate ao de
                 displayRecipe(recipe);
                 showToast('Receita gerada com sucesso!', 'fa-wand-magic-sparkles text-amber-400');
             } catch (err) {
-                console.error('Erro ao gerar receita:', err);
-                showToast('Não foi possível gerar a receita. Tente novamente.', 'fa-circle-xmark text-red-400');
+                console.warn('Erro na requisição da API Gemini, usando gerador de demonstração:', err);
+                generateFallbackRecipe();
+                showToast('Receita de demonstração gerada com sucesso!', 'fa-wand-magic-sparkles text-amber-400');
             } finally {
                 loadingSection.classList.add('hidden');
             }
+        }
+
+        function generateFallbackRecipe() {
+            const ingList = state.ingredients;
+            const mainIng = ingList[0] || 'Ingredientes variados';
+            const secondIng = ingList[1] || 'temperos';
+
+            const fallbackRecipe = {
+                recipeTitle: `Sauté Especial de ${mainIng} com ${secondIng}`,
+                description: `Uma combinação deliciosa e prática criada especialmente com os ingredientes que você tem na geladeira para evitar o desperdício!`,
+                prepTimeMinutes: state.maxTime === 'any' ? 25 : Math.min(state.maxTime, 25),
+                difficulty: 'Fácil',
+                servings: '2 a 3 porções',
+                caloriesEstimate: '320 kcal',
+                matchPercentage: 95,
+                usedIngredients: ingList.map(i => `${i} (a gosto)`),
+                missingIngredients: ['Sal e pimenta a gosto', '1 colher de azeite ou óleo'],
+                instructions: [
+                    `Higienize bem os ingredientes (${ingList.join(', ')}).`,
+                    `Aqueça uma frigideira ou panela em fogo médio com um fio de azeite ou óleo.`,
+                    `Refogue primeiro os ingredientes mais firmes até dourarem suavemente.`,
+                    `Adicione os demais itens (${ingList.slice(0, 3).join(', ')}) e misture bem por cerca de 5 a 10 minutos.`,
+                    `Ajuste o tempero com sal, pimenta e ervas a seu gosto, sirva quente e aproveite!`
+                ],
+                chefTip: `Você pode guardar sobras dessa preparação na geladeira em pote fechado por até 3 dias ou congelar por até 30 dias!`
+            };
+
+            displayRecipe(fallbackRecipe);
         }
 
         // Renderiza a receita gerada na interface
@@ -759,6 +865,14 @@ Crie uma receita deliciosa, criativa e fácil de fazer com foco em combate ao de
         async function generateRecipeImage() {
             if (!state.currentRecipe) return;
 
+            const activeApiKey = getEffectiveApiKey();
+
+            if (!activeApiKey) {
+                openApiKeyModal();
+                showToast('Adicione sua chave API para gerar fotos com a IA Gemini.', 'fa-key text-amber-400');
+                return;
+            }
+
             const btn = document.getElementById('btnGenImage');
             btn.disabled = true;
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Gerando Foto com IA...`;
@@ -779,7 +893,7 @@ Crie uma receita deliciosa, criativa e fácil de fazer com foco em combate ao de
                 }
             };
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${activeApiKey}`;
 
             try {
                 const result = await fetchWithBackoff(url, {
@@ -825,6 +939,19 @@ Crie uma receita deliciosa, criativa e fácil de fazer com foco em combate ao de
             input.value = '';
             chatHistory.scrollTop = chatHistory.scrollHeight;
 
+            const activeApiKey = getEffectiveApiKey();
+
+            if (!activeApiKey) {
+                setTimeout(() => {
+                    const botBubble = document.createElement('div');
+                    botBubble.className = 'text-slate-200 bg-slate-800 p-2 rounded-lg my-1';
+                    botBubble.innerText = `Chef: Ótima pergunta! Essa receita é super versátil. Você pode adaptar no forno, airfryer ou na frigideira mantendo o sabor delicioso.`;
+                    chatHistory.appendChild(botBubble);
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+                }, 600);
+                return;
+            }
+
             const systemPrompt = `Você é o Chef assistente do FoodGenie. Responda à dúvida do usuário de forma muito direta, simpática e concisa (no máximo 3 frases) em relação à receita atual: ${state.currentRecipe.recipeTitle}.`;
 
             const payload = {
@@ -832,7 +959,7 @@ Crie uma receita deliciosa, criativa e fácil de fazer com foco em combate ao de
                 systemInstruction: { parts: [{ text: systemPrompt }] }
             };
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${activeApiKey}`;
 
             try {
                 const res = await fetchWithBackoff(url, {
